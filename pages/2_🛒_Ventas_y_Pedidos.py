@@ -134,11 +134,12 @@ with tab1:
                                     customer_phone, customer_address, customer_city, customer_department,
                                     sales_channel, payment_method, status, total_amount, created_by
                                 ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                                RETURNING id
                             """, (order_num, ext_order_id, order_date, cust_name, cust_cedula,
                                   cust_phone, cust_address, cust_city, cust_dept,
                                   sales_channel, payment_method, status, float(total_order), st.session_state.get('logged_in_user', 'Desconocido')))
 
-                            order_id = c.lastrowid
+                            order_id = c.fetchone()[0]
 
                             for item in st.session_state['cart']:
                                 c.execute("""
