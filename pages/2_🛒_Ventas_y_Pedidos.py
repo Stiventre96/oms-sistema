@@ -136,7 +136,7 @@ with tab1:
                                 ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
                             """, (order_num, ext_order_id, order_date, cust_name, cust_cedula,
                                   cust_phone, cust_address, cust_city, cust_dept,
-                                  sales_channel, payment_method, status, total_order, st.session_state.get('logged_in_user', 'Desconocido')))
+                                  sales_channel, payment_method, status, float(total_order), st.session_state.get('logged_in_user', 'Desconocido')))
 
                             order_id = c.lastrowid
 
@@ -314,7 +314,7 @@ with tab2:
                                             sales_channel=%s, external_order_id=%s, payment_method=%s, total_amount=%s
                                         WHERE id=%s
                                     """, (new_date, new_name, new_cedula, new_phone, new_address,
-                                          new_city, new_dept, new_channel, new_ext_id, new_pay, edit_total_order,
+                                          new_city, new_dept, new_channel, new_ext_id, new_pay, float(edit_total_order),
                                           row_edit_id))
                                     
                                     # Update order items (delete old, insert new)
