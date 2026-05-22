@@ -65,10 +65,25 @@ with tab1:
 
         if st.session_state['cart']:
             st.write("### Carrito Actual")
+            st.caption("👆 Haz clic en un artículo de la tabla si deseas eliminarlo individualmente.")
             df_cart = pd.DataFrame(st.session_state['cart'])
-            st.dataframe(df_cart[['name', 'quantity', 'discount_applied', 'unit_price', 'total']], use_container_width=True)
+            event_cart = st.dataframe(
+                df_cart[['name', 'quantity', 'discount_applied', 'unit_price', 'total']], 
+                use_container_width=True,
+                on_select="rerun",
+                selection_mode="single-row",
+                key="cart_selection_create"
+            )
 
-            if st.button("Limpiar Carrito", key="btn_clear_create"):
+            sel_cart = event_cart.selection.rows
+            if sel_cart and sel_cart[0] < len(st.session_state['cart']):
+                idx_to_del = sel_cart[0]
+                item_to_del = st.session_state['cart'][idx_to_del]['name']
+                if st.button(f"🗑️ Eliminar '{item_to_del}'", key="btn_del_item_create"):
+                    st.session_state['cart'].pop(idx_to_del)
+                    st.rerun()
+
+            if st.button("Limpiar Todo el Carrito", key="btn_clear_create"):
                 st.session_state['cart'] = []
                 st.rerun()
 
@@ -224,9 +239,25 @@ with tab2:
                             st.rerun()
 
                     if st.session_state['edit_cart']:
+                        st.caption("👆 Haz clic en un artículo de la tabla si deseas eliminarlo individualmente.")
                         df_edit_cart = pd.DataFrame(st.session_state['edit_cart'])
-                        st.dataframe(df_edit_cart[['name', 'quantity', 'discount_applied', 'unit_price', 'total']], use_container_width=True)
-                        if st.button("Limpiar Carrito / Volver a empezar", key="btn_clear_edit"):
+                        event_edit_cart = st.dataframe(
+                            df_edit_cart[['name', 'quantity', 'discount_applied', 'unit_price', 'total']], 
+                            use_container_width=True,
+                            on_select="rerun",
+                            selection_mode="single-row",
+                            key="cart_selection_edit"
+                        )
+                        
+                        sel_ecart = event_edit_cart.selection.rows
+                        if sel_ecart and sel_ecart[0] < len(st.session_state['edit_cart']):
+                            idx_to_del = sel_ecart[0]
+                            item_to_del = st.session_state['edit_cart'][idx_to_del]['name']
+                            if st.button(f"🗑️ Eliminar '{item_to_del}'", key="btn_del_item_edit"):
+                                st.session_state['edit_cart'].pop(idx_to_del)
+                                st.rerun()
+
+                        if st.button("Limpiar Todo el Carrito", key="btn_clear_edit"):
                             st.session_state['edit_cart'] = []
                             st.rerun()
                         edit_total_order = df_edit_cart['total'].sum()
