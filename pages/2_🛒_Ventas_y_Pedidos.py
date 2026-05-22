@@ -151,9 +151,9 @@ with tab2:
         st.caption("👆 Haz clic en un pedido de la tabla para editar sus datos personales o agregar/quitar artículos.")
 
         df_edit = pd.read_sql("""
-            SELECT id, order_number AS 'N° Pedido', order_date AS 'Fecha',
-                   customer_name AS 'Cliente', customer_phone AS 'Teléfono',
-                   sales_channel AS 'Canal', payment_method AS 'Pago', status
+            SELECT id, order_number AS "N° Pedido", order_date AS "Fecha",
+                   customer_name AS "Cliente", customer_phone AS "Teléfono",
+                   sales_channel AS "Canal", payment_method AS "Pago", status
             FROM orders
             WHERE status IN ('PENDING_PAYMENT', 'PENDING_DISPATCH')
             ORDER BY created_at DESC
@@ -312,9 +312,9 @@ with tab3:
         st.caption("👆 Haz clic en un pedido de la tabla para cancelarlo.")
 
         df_cancel = pd.read_sql("""
-            SELECT id, order_number AS 'N° Pedido', order_date AS 'Fecha',
-                   customer_name AS 'Cliente', payment_method AS 'Pago',
-                   total_amount AS 'Total'
+            SELECT id, order_number AS "N° Pedido", order_date AS "Fecha",
+                   customer_name AS "Cliente", payment_method AS "Pago",
+                   total_amount AS "Total"
             FROM orders
             WHERE status IN ('PENDING_PAYMENT', 'PENDING_DISPATCH')
         """, conn)

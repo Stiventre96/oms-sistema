@@ -25,14 +25,14 @@ with tab1:
     st.caption("👆 Haz clic en un pedido de la tabla para ver su detalle y gestionar el despacho.")
 
     df_dispatch = pd.read_sql("""
-        SELECT o.id, o.order_number AS 'N° Pedido', o.order_date AS 'Fecha',
-               o.customer_name AS 'Cliente', o.customer_city AS 'Ciudad',
-               o.customer_phone AS 'Teléfono', o.customer_address AS 'Dirección',
-               o.customer_department AS 'Departamento',
-               o.payment_method AS 'Método Pago',
-               CASE WHEN o.is_paid=1 THEN '✅ Pagado' ELSE '❌ Cobrar en destino' END AS 'Estado Pago',
-               o.total_amount AS 'Total', o.tracking_number AS 'Guía Actual',
-               o.external_order_id AS 'ID Externo'
+        SELECT o.id, o.order_number AS "N° Pedido", o.order_date AS "Fecha",
+               o.customer_name AS "Cliente", o.customer_city AS "Ciudad",
+               o.customer_phone AS "Teléfono", o.customer_address AS "Dirección",
+               o.customer_department AS "Departamento",
+               o.payment_method AS "Método Pago",
+               CASE WHEN o.is_paid=TRUE THEN '✅ Pagado' ELSE '❌ Cobrar en destino' END AS "Estado Pago",
+               o.total_amount AS "Total", o.tracking_number AS "Guía Actual",
+               o.external_order_id AS "ID Externo"
         FROM orders o
         WHERE o.status = 'PENDING_DISPATCH'
         ORDER BY o.created_at DESC
@@ -77,7 +77,7 @@ with tab1:
                 # Productos del pedido
                 df_items = pd.read_sql("""
                     SELECT p.name AS Producto, oi.quantity AS Cantidad,
-                           oi.unit_price AS 'Precio Unit.',
+                           oi.unit_price AS "Precio Unit.",
                            (oi.quantity * oi.unit_price) AS Subtotal
                     FROM order_items oi JOIN products p ON oi.product_id = p.id
                     WHERE oi.order_id = %s
@@ -144,9 +144,9 @@ with tab2:
     st.caption("👆 Haz clic en un pedido para consultar su estado en Coordinadora.")
 
     df_history = pd.read_sql("""
-        SELECT id, order_number AS 'N° Pedido', tracking_number AS 'Guía',
-               customer_name AS 'Cliente', customer_city AS 'Ciudad',
-               status AS 'Estado'
+        SELECT id, order_number AS "N° Pedido", tracking_number AS "Guía",
+               customer_name AS "Cliente", customer_city AS "Ciudad",
+               status AS "Estado"
         FROM orders
         WHERE status IN ('DISPATCHED', 'DELIVERED')
         ORDER BY created_at DESC
@@ -217,8 +217,8 @@ with tab3:
         st.caption("👆 Haz clic en un pedido de la tabla para cancelarlo.")
 
         df_cancel_log = pd.read_sql("""
-            SELECT id, order_number AS 'N° Pedido', order_date AS 'Fecha',
-                   customer_name AS 'Cliente', total_amount AS 'Total'
+            SELECT id, order_number AS "N° Pedido", order_date AS "Fecha",
+                   customer_name AS "Cliente", total_amount AS "Total"
             FROM orders WHERE status = 'PENDING_DISPATCH'
         """, conn)
 

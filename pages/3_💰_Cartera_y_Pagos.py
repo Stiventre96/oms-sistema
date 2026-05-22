@@ -37,17 +37,17 @@ with tab1:
         where_clause = f"WHERE o.status = '{estado_map[estado_filtro]}'"
 
     df_orders = pd.read_sql(f"""
-        SELECT o.id, o.order_number AS 'N° Pedido', o.order_date AS 'Fecha',
-               o.customer_name AS 'Cliente', o.customer_cedula AS 'Cédula',
-               o.sales_channel AS 'Canal', o.payment_method AS 'Pago',
+        SELECT o.id, o.order_number AS "N° Pedido", o.order_date AS "Fecha",
+               o.customer_name AS "Cliente", o.customer_cedula AS "Cédula",
+               o.sales_channel AS "Canal", o.payment_method AS "Pago",
                CASE 
                    WHEN o.status='PENDING_PAYMENT' THEN '⏳ Pendiente'
                    WHEN o.status='PENDING_DISPATCH' THEN '📦 Despacho'
                    WHEN o.status='DISPATCHED' THEN '🚚 Despachado'
                    WHEN o.status='DELIVERED' THEN '✅ Entregado'
                    ELSE o.status 
-               END AS 'Estado',
-               o.total_amount AS 'Total'
+               END AS "Estado",
+               o.total_amount AS "Total"
         FROM orders o
         {where_clause}
         ORDER BY o.created_at DESC
@@ -117,9 +117,9 @@ with tab2:
     st.caption("👆 Haz clic en un pedido pendiente para aprobarlo y enviarlo a Logística.")
 
     df_pending = pd.read_sql("""
-        SELECT id, order_number AS 'N° Pedido', order_date AS 'Fecha',
-               customer_name AS 'Cliente', payment_method AS 'Método Pago',
-               total_amount AS 'Total'
+        SELECT id, order_number AS "N° Pedido", order_date AS "Fecha",
+               customer_name AS "Cliente", payment_method AS "Método Pago",
+               total_amount AS "Total"
         FROM orders
         WHERE status = 'PENDING_PAYMENT' OR (payment_method = 'Contra Entrega' AND invoice_number IS NULL)
     """, conn)
@@ -172,10 +172,10 @@ with tab3:
     st.caption("👆 Selecciona un pedido para corregir su estado de pago, número de factura o método de pago.")
 
     df_mod = pd.read_sql("""
-        SELECT id, order_number AS 'N° Pedido', order_date AS 'Fecha',
-               customer_name AS 'Cliente', payment_method AS 'Pago',
-               CASE WHEN is_paid=1 THEN 'Sí' ELSE 'No' END AS 'Pagado',
-               invoice_number AS 'Factura'
+        SELECT id, order_number AS "N° Pedido", order_date AS "Fecha",
+               customer_name AS "Cliente", payment_method AS "Pago",
+               CASE WHEN is_paid=TRUE THEN 'Sí' ELSE 'No' END AS "Pagado",
+               invoice_number AS "Factura"
         FROM orders
         WHERE status IN ('PENDING_PAYMENT', 'PENDING_DISPATCH', 'DISPATCHED', 'DELIVERED')
         ORDER BY created_at DESC
@@ -248,9 +248,9 @@ with tab4:
     st.caption("👆 Haz clic en un pedido pendiente de pago para cancelarlo.")
 
     df_cancel = pd.read_sql("""
-        SELECT id, order_number AS 'N° Pedido', order_date AS 'Fecha',
-               customer_name AS 'Cliente', payment_method AS 'Pago',
-               total_amount AS 'Total'
+        SELECT id, order_number AS "N° Pedido", order_date AS "Fecha",
+               customer_name AS "Cliente", payment_method AS "Pago",
+               total_amount AS "Total"
         FROM orders
         WHERE status = 'PENDING_PAYMENT'
     """, conn)
