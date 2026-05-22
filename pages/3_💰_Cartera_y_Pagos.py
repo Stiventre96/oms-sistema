@@ -97,9 +97,9 @@ with tab1:
 
                 st.markdown("#### 🛒 Productos")
                 df_items = pd.read_sql("""
-                    SELECT p.sku AS SKU, p.name AS Producto, oi.quantity AS Cant,
-                           oi.applied_discount AS Dcto, oi.unit_price AS Precio,
-                           (oi.quantity * oi.unit_price) AS Subtotal
+                    SELECT p.sku AS "SKU", p.name AS "Producto", oi.quantity AS "Cant",
+                           oi.applied_discount AS "Dcto", oi.unit_price AS "Precio",
+                           (oi.quantity * oi.unit_price) AS "Subtotal"
                     FROM order_items oi JOIN products p ON oi.product_id = p.id
                     WHERE oi.order_id = %s
                 """, conn, params=(order_id_sel,))
