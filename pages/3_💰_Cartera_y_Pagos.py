@@ -97,9 +97,9 @@ with tab1:
 
                 st.markdown("#### 🛒 Productos")
                 df_items = pd.read_sql("""
-                    SELECT p.sku AS "SKU", p.name AS "Producto", oi.quantity AS "Cant",
-                           oi.applied_discount AS "Dcto", oi.unit_price AS "Precio",
-                           (oi.quantity * oi.unit_price) AS "Subtotal"
+                    SELECT p.sku AS SKU, p.name AS Producto, oi.quantity AS Cant,
+                           oi.applied_discount AS Dcto, oi.unit_price AS Precio,
+                           (oi.quantity * oi.unit_price) AS Subtotal
                     FROM order_items oi JOIN products p ON oi.product_id = p.id
                     WHERE oi.order_id = %s
                 """, conn, params=(order_id_sel,))
@@ -151,7 +151,7 @@ with tab2:
                 if st.button("✅ Confirmar y Enviar a Logística", type="primary", key=f"btn_pay_{row_p['id']}"):
                     try:
                         c = conn.cursor()
-                        is_paid = 1 if payment_status == "Pagado" else 0
+                        is_paid = True if payment_status == "Pagado" else False
                         c.execute("""
                             UPDATE orders
                             SET is_paid = %s, invoice_number = %s, status = 'PENDING_DISPATCH'
@@ -227,7 +227,7 @@ with tab3:
                 if st.button("💾 Guardar Corrección", type="primary", key=f"mod_btn_{order_id_mod}"):
                     try:
                         c = conn.cursor()
-                        new_is_paid = 1 if new_pay_status == "Pagado" else 0
+                        new_is_paid = True if new_pay_status == "Pagado" else False
                         c.execute("""
                             UPDATE orders
                             SET is_paid = %s, invoice_number = %s, payment_method = %s
