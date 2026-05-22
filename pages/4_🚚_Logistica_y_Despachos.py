@@ -76,9 +76,9 @@ with tab1:
 
                 # Productos del pedido
                 df_items = pd.read_sql("""
-                    SELECT p.name AS Producto, oi.quantity AS Cantidad,
+                    SELECT p.name AS "Producto", oi.quantity AS "Cantidad",
                            oi.unit_price AS "Precio Unit.",
-                           (oi.quantity * oi.unit_price) AS Subtotal
+                           (oi.quantity * oi.unit_price) AS "Subtotal"
                     FROM order_items oi JOIN products p ON oi.product_id = p.id
                     WHERE oi.order_id = %s
                 """, conn, params=(order_id,))
