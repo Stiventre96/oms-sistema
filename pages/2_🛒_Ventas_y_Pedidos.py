@@ -111,7 +111,7 @@ with tab1:
                 st.write("#### Detalles Comerciales")
                 colD, colE, colF = st.columns(3)
                 with colD:
-                    sales_channel = st.selectbox("Canal de Venta", ["Whatsapp", "Woocommerce", "MercadoLibre", "Venta Física"])
+                    sales_channel = st.selectbox("Canal de Venta", ["Whatsapp", "Woocommerce", "MercadoLibre", "Venta Física", "Shopify"])
                 with colE:
                     ext_order_id = st.text_input("ID de Pedido (Ej. Woocommerce)")
                 with colF:
@@ -288,7 +288,7 @@ with tab2:
                                 new_dept = st.text_input("Departamento", value=order_row['customer_department'] or "")
 
                         colD, colE, colF = st.columns(3)
-                        channel_opts = ["Whatsapp", "Woocommerce", "MercadoLibre", "Venta Física"]
+                        channel_opts = ["Whatsapp", "Woocommerce", "MercadoLibre", "Venta Física", "Shopify"]
                         pay_opts = ["Efectivo", "Wompy", "Contra Entrega", "Bancolombia", "Nequi", "Davivienda", "Canje por Publicidad", "Embajador"]
                         with colD:
                             new_channel = st.selectbox("Canal de Venta", channel_opts,
