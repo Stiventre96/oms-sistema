@@ -1,8 +1,16 @@
-import streamlit as st
 import psycopg2
 import os
+import streamlit as st
 
-DB_URI = st.secrets["DATABASE_URL"]
+# Intentamos obtener la conexión de los Secretos seguros de Streamlit.
+# Si no estamos en la nube (ej. corriendo local), intentará usar variables de entorno.
+try:
+    DB_URI = st.secrets["DATABASE_URL"]
+except KeyError:
+    DB_URI = os.getenv("DATABASE_URL")
+
+if not DB_URI:
+    raise ValueError("No se encontró la conexión a la base de datos (DATABASE_URL) en los secretos.")
 
 def get_connection():
     return psycopg2.connect(DB_URI)
