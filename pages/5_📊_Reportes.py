@@ -120,7 +120,7 @@ with row1_col1:
     st.markdown("#### 📈 Tendencia de Ingresos Diarios")
     ventas_diarias = df_pedidos_unicos.groupby('order_date')['total_amount'].sum().reset_index()
     if not ventas_diarias.empty:
-        fig_area = px.area(ventas_diarias, x='order_date', y='total_amount', 
+        fig_area = px.bar(ventas_diarias, x='order_date', y='total_amount', 
                            color_discrete_sequence=['#00D2D3'],
                            labels={'order_date': 'Fecha', 'total_amount': 'Ingresos ($)'})
         fig_area.update_layout(margin=dict(l=0, r=0, t=30, b=0), plot_bgcolor="rgba(0,0,0,0)", paper_bgcolor="rgba(0,0,0,0)")
