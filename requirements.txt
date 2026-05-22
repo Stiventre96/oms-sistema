@@ -4,3 +4,4 @@ psycopg2-binary
 SQLAlchemy
 requests
 plotly
+openpyxl
