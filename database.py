@@ -1,7 +1,8 @@
+import streamlit as st
 import psycopg2
 import os
 
-DB_URI = os.getenv("DATABASE_URL", "postgresql://neondb_owner:npg_uzATNgqVx0D1@ep-blue-rice-apz2tqgz.c-7.us-east-1.aws.neon.tech/neondb?sslmode=require")
+DB_URI = st.secrets["DATABASE_URL"]
 
 def get_connection():
     return psycopg2.connect(DB_URI)
