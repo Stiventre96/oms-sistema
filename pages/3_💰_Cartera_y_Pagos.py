@@ -25,15 +25,16 @@ with tab1:
 
     col_f1, _ = st.columns([2, 1])
     with col_f1:
-        estado_filtro = st.selectbox("Filtrar por Estado",
-            ["Todos", "Pendiente de Pago", "Listo para Despachar", "Despachado", "Entregado"], key="filtro_general")
+        estado_filtro = st.selectbox("Filtrar por Estado", ["Todos", "Pendiente de Pago", "Listo para Despachar", "Despachado", "Entregado", "Contra Entrega Sin Factura"], key="filtro_general")
     estado_map = {
         "Todos": None, "Pendiente de Pago": "PENDING_PAYMENT",
         "Listo para Despachar": "PENDING_DISPATCH", "Despachado": "DISPATCHED", "Entregado": "DELIVERED"
-    }
+    , "Contra Entrega Sin Factura": "CONTRA_ENTREGA_SIN_FACTURA"}
 
     where_clause = ""
-    if estado_map[estado_filtro]:
+    if estado_map[estado_filtro] == "CONTRA_ENTREGA_SIN_FACTURA":
+        where_clause = "WHERE o.payment_method = 'Contra Entrega' AND (o.invoice_number IS NULL OR o.invoice_number = '') AND o.status IN ('PENDING_DISPATCH', 'DISPATCHED', 'DELIVERED')"
+    elif estado_map[estado_filtro]:
         where_clause = f"WHERE o.status = '{estado_map[estado_filtro]}'"
 
     df_orders = pd.read_sql(f"""
