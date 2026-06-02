@@ -26,7 +26,7 @@ with tab1:
 
     df_dispatch = pd.read_sql("""
         SELECT o.id, o.order_number AS "N° Pedido", o.order_date AS "Fecha",
-               o.customer_name AS "Cliente", o.customer_city AS "Ciudad",
+               o.customer_name AS "Cliente", o.customer_cedula AS "Cédula", o.customer_city AS "Ciudad",
                o.customer_phone AS "Teléfono", o.customer_address AS "Dirección",
                o.customer_department AS "Departamento",
                o.payment_method AS "Método Pago",
@@ -34,7 +34,8 @@ with tab1:
                o.total_amount AS "Total", o.tracking_number AS "Guía Actual",
                o.external_order_id AS "ID Externo",
                o.sales_channel AS "Canal",
-               o.created_by AS "Vendedor"
+               o.created_by AS "Vendedor",
+               o.invoice_number AS "Factura"
         FROM orders o
         WHERE o.status = 'PENDING_DISPATCH'
         ORDER BY o.created_at DESC
@@ -62,23 +63,31 @@ with tab1:
 
             # Datos del cliente resumidos para crear la guía
             with st.container(border=True):
-                st.markdown("#### 📦 Datos de Envío y Comerciales")
+                st.markdown("#### 📦 Datos Completos del Pedido")
                 c1, c2, c3, c4 = st.columns(4)
                 with c1:
-                    st.markdown(f"**Destinatario:** {row['Cliente']}")
-                    st.markdown(f"**Teléfono:** {row['Teléfono'] or '—'}")
+                    st.markdown("##### 🧾 Cliente")
+                    st.markdown(f"**Nombre:** {row['Cliente']}")
+                    st.markdown(f"**Cédula / NIT:** {row['Cédula']}")
+                    st.markdown(f"**Teléfono:** {row['Teléfono'] or 'Sin registrar'}")
                 with c2:
-                    st.markdown(f"**Ciudad:** {row['Ciudad'] or '—'} / {row['Departamento'] or '—'}")
-                    st.markdown(f"**Dirección:** {row['Dirección'] or '—'}")
+                    st.markdown("##### 📍 Destino")
+                    st.markdown(f"**Dirección:** {row['Dirección'] or 'Sin registrar'}")
+                    st.markdown(f"**Ciudad:** {row['Ciudad'] or 'Sin registrar'}")
+                    st.markdown(f"**Depto:** {row['Departamento'] or 'Sin registrar'}")
                 with c3:
-                    st.markdown(f"**Método de Pago:** {row['Método Pago']}")
-                    st.markdown(f"**{row['Estado Pago']}**")
+                    st.markdown("##### 📋 Facturación y Envío")
+                    st.markdown(f"**Medio de Pago:** {row['Método Pago']}")
+                    st.markdown(f"**Pagado:** {row['Estado Pago']}")
+                    st.markdown(f"**Factura Ext:** {row['Factura'] or 'Sin factura'}")
+                    st.markdown(f"**Guía Coord:** {row['Guía Actual'] or 'Sin guía asignada'}")
                     if row['Estado Pago'] == '❌ Cobrar en destino':
                         st.error(f"Cobrar en destino: **${row['Total']:,.2f}**")
                 with c4:
+                    st.markdown("##### ℹ️ Info Comercial")
                     st.markdown(f"**Fecha:** {row['Fecha']}")
                     st.markdown(f"**Canal:** {row['Canal']}")
-                    st.markdown(f"**ID Externo:** {row['ID Externo'] or '—'}")
+                    st.markdown(f"**ID Externo:** {row['ID Externo'] or 'Sin ID'}")
                     st.markdown(f"**Vendedor:** {row['Vendedor']}")
 
                 # Productos del pedido

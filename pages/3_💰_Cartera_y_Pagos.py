@@ -85,29 +85,28 @@ with tab1:
                 
                 c1, c2, c3, c4 = st.columns(4)
                 with c1:
-                    st.markdown("#### 🧾 Cliente")
+                    st.markdown("##### 🧾 Cliente")
                     st.markdown(f"**Nombre:** {row['customer_name']}")
                     st.markdown(f"**Cédula / NIT:** {row['customer_cedula']}")
-                    st.markdown(f"**Teléfono:** {row['customer_phone'] or '—'}")
+                    st.markdown(f"**Teléfono:** {row['customer_phone'] or 'Sin registrar'}")
                 with c2:
-                    st.markdown("#### 📍 Destino")
-                    st.markdown(f"**Dirección:** {row['customer_address'] or '—'}")
-                    st.markdown(f"**Ciudad:** {row['customer_city'] or '—'}")
-                    st.markdown(f"**Depto:** {row['customer_department'] or '—'}")
+                    st.markdown("##### 📍 Destino")
+                    st.markdown(f"**Dirección:** {row['customer_address'] or 'Sin registrar'}")
+                    st.markdown(f"**Ciudad:** {row['customer_city'] or 'Sin registrar'}")
+                    st.markdown(f"**Depto:** {row['customer_department'] or 'Sin registrar'}")
                 with c3:
-                    st.markdown("#### 📋 Facturación")
-                    st.markdown(f"**Método de Pago:** {row['payment_method']}")
+                    st.markdown("##### 📋 Facturación y Envío")
+                    st.markdown(f"**Medio de Pago:** {row['payment_method']}")
                     pagado = "✅ Sí" if row['is_paid'] else "❌ No"
                     st.markdown(f"**Pagado:** {pagado}")
-                    st.markdown(f"**Factura Ext:** {row['invoice_number'] or '—'}")
+                    st.markdown(f"**Factura Ext:** {row['invoice_number'] or 'Sin factura'}")
+                    st.markdown(f"**Guía Coord:** {row['tracking_number'] or 'Sin guía asignada'}")
                 with c4:
-                    st.markdown("#### ℹ️ Info Comercial")
+                    st.markdown("##### ℹ️ Info Comercial")
                     st.markdown(f"**Fecha:** {row['order_date']}")
                     st.markdown(f"**Canal:** {row['sales_channel']}")
-                    st.markdown(f"**ID Externo:** {row['external_order_id'] or '—'}")
+                    st.markdown(f"**ID Externo:** {row['external_order_id'] or 'Sin ID'}")
                     st.markdown(f"**Vendedor:** {row['created_by']}")
-                    if row['tracking_number']:
-                        st.markdown(f"**Guía:** {row['tracking_number']}")
 
                 st.markdown("#### 🛒 Productos")
                 df_items = pd.read_sql("""
