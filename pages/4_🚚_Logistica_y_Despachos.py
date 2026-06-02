@@ -32,7 +32,9 @@ with tab1:
                o.payment_method AS "Método Pago",
                CASE WHEN o.is_paid=TRUE THEN '✅ Pagado' ELSE '❌ Cobrar en destino' END AS "Estado Pago",
                o.total_amount AS "Total", o.tracking_number AS "Guía Actual",
-               o.external_order_id AS "ID Externo"
+               o.external_order_id AS "ID Externo",
+               o.sales_channel AS "Canal",
+               o.created_by AS "Vendedor"
         FROM orders o
         WHERE o.status = 'PENDING_DISPATCH'
         ORDER BY o.created_at DESC
@@ -60,8 +62,8 @@ with tab1:
 
             # Datos del cliente resumidos para crear la guía
             with st.container(border=True):
-                st.markdown("#### 📦 Datos de Envío (Para la guía en Coordinadora)")
-                c1, c2, c3 = st.columns(3)
+                st.markdown("#### 📦 Datos de Envío y Comerciales")
+                c1, c2, c3, c4 = st.columns(4)
                 with c1:
                     st.markdown(f"**Destinatario:** {row['Cliente']}")
                     st.markdown(f"**Teléfono:** {row['Teléfono'] or '—'}")
@@ -73,6 +75,11 @@ with tab1:
                     st.markdown(f"**{row['Estado Pago']}**")
                     if row['Estado Pago'] == '❌ Cobrar en destino':
                         st.error(f"Cobrar en destino: **${row['Total']:,.2f}**")
+                with c4:
+                    st.markdown(f"**Fecha:** {row['Fecha']}")
+                    st.markdown(f"**Canal:** {row['Canal']}")
+                    st.markdown(f"**ID Externo:** {row['ID Externo'] or '—'}")
+                    st.markdown(f"**Vendedor:** {row['Vendedor']}")
 
                 # Productos del pedido
                 df_items = pd.read_sql("""

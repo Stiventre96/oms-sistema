@@ -83,7 +83,7 @@ with tab1:
             with st.container(border=True):
                 st.markdown(f"### Pedido: `{row['order_number']}`")
                 
-                c1, c2, c3 = st.columns(3)
+                c1, c2, c3, c4 = st.columns(4)
                 with c1:
                     st.markdown("#### 🧾 Cliente")
                     st.markdown(f"**Nombre:** {row['customer_name']}")
@@ -100,6 +100,14 @@ with tab1:
                     pagado = "✅ Sí" if row['is_paid'] else "❌ No"
                     st.markdown(f"**Pagado:** {pagado}")
                     st.markdown(f"**Factura Ext:** {row['invoice_number'] or '—'}")
+                with c4:
+                    st.markdown("#### ℹ️ Info Comercial")
+                    st.markdown(f"**Fecha:** {row['order_date']}")
+                    st.markdown(f"**Canal:** {row['sales_channel']}")
+                    st.markdown(f"**ID Externo:** {row['external_order_id'] or '—'}")
+                    st.markdown(f"**Vendedor:** {row['created_by']}")
+                    if row['tracking_number']:
+                        st.markdown(f"**Guía:** {row['tracking_number']}")
 
                 st.markdown("#### 🛒 Productos")
                 df_items = pd.read_sql("""
