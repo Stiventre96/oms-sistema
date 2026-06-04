@@ -165,7 +165,7 @@ with tab1:
                             value=row['invoice_number'] or "", key=f"mod_inv_{order_id_sel}")
                     with colC:
                         pay_method_opts = ["Efectivo", "Wompy", "Contra Entrega", "Bancolombia",
-                                           "Nequi", "Davivienda", "Canje por Publicidad", "Embajador"]
+                                           "Nequi", "Davivienda", "Canje por Publicidad", "sistecredito", "Embajador"]
                         curr_method = row['payment_method']
                         new_pay_method = st.selectbox("Corregir Método de Pago", pay_method_opts,
                             index=pay_method_opts.index(curr_method) if curr_method in pay_method_opts else 0,
