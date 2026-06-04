@@ -41,7 +41,7 @@ with tab1:
         ORDER BY o.created_at DESC
     """, conn)
 
-    solo_sin_guia = st.checkbox("Mostrar solo pedidos sin guía", value=False, key="chk_sin_guia_ce")
+    solo_sin_guia = st.checkbox("Mostrar solo pedidos sin guía", value=False, key="chk_sin_guia_pagados")
     
     if solo_sin_guia:
         df_display = df_dispatch[df_dispatch['Guía Actual'].isna() | (df_dispatch['Guía Actual'] == '')]
