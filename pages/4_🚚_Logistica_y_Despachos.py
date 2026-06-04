@@ -41,11 +41,18 @@ with tab1:
         ORDER BY o.created_at DESC
     """, conn)
 
-    if df_dispatch.empty:
-        st.info("No hay pedidos pendientes de despacho en este momento.")
+    solo_sin_guia = st.checkbox("Mostrar solo pedidos sin guía", value=False, key="chk_sin_guia_ce")
+    
+    if solo_sin_guia:
+        df_display = df_dispatch[df_dispatch['Guía Actual'].isna() | (df_dispatch['Guía Actual'] == '')]
+    else:
+        df_display = df_dispatch
+
+    if df_display.empty:
+        st.info("No hay pedidos que coincidan con la búsqueda actual.")
     else:
         event = st.dataframe(
-            df_dispatch.drop(columns=['id']),
+            df_display.drop(columns=['id']),
             use_container_width=True,
             hide_index=True,
             on_select="rerun",
@@ -172,15 +179,22 @@ with tab_ce:
                o.created_by AS "Vendedor",
                o.invoice_number AS "Factura"
         FROM orders o
-        WHERE o.status = 'PENDING_DISPATCH' AND o.payment_method = 'Contra Entrega' AND (o.tracking_number IS NULL OR o.tracking_number = '')
+        WHERE o.status = 'PENDING_DISPATCH' AND o.payment_method = 'Contra Entrega'
         ORDER BY o.created_at DESC
     """, conn)
 
-    if df_dispatch.empty:
-        st.info("No hay pedidos pendientes de despacho en este momento.")
+    solo_sin_guia = st.checkbox("Mostrar solo pedidos sin guía", value=False, key="chk_sin_guia_ce")
+    
+    if solo_sin_guia:
+        df_display = df_dispatch[df_dispatch['Guía Actual'].isna() | (df_dispatch['Guía Actual'] == '')]
+    else:
+        df_display = df_dispatch
+
+    if df_display.empty:
+        st.info("No hay pedidos que coincidan con la búsqueda actual.")
     else:
         event = st.dataframe(
-            df_dispatch.drop(columns=['id']),
+            df_display.drop(columns=['id']),
             use_container_width=True,
             hide_index=True,
             on_select="rerun",
