@@ -17,11 +17,11 @@ if role not in ["Admin", "Logistica", "Ventas"]:
 st.title("🚚 Logística y Despachos")
 conn = database.get_connection()
 
-tab1, tab_ce, tab2, tab3 = st.tabs(["📦 Pedidos (Pagados)", "💵 Pedidos (Contra Entrega)", "🔍 Rastrear Guías", "❌ Cancelar Pedido"])
+tab1, tab_ce, tab2, tab3 = st.tabs(["📦 Listos para Despachar", "💵 Asignar Guía (Contra Entrega)", "🔍 Rastrear Guías", "❌ Cancelar Pedido"])
 
 # ─── PESTAÑA 1: DESPACHAR ─────────────────────────────────────────────────────
 with tab1:
-    st.subheader("Pedidos Pagados listos para despachar")
+    st.subheader("Pedidos listos para despachar (Pagados y CE con guía)")
     st.caption("👆 Haz clic en un pedido de la tabla para ver su detalle y gestionar el despacho.")
 
     df_dispatch = pd.read_sql("""
@@ -37,22 +37,15 @@ with tab1:
                o.created_by AS "Vendedor",
                o.invoice_number AS "Factura"
         FROM orders o
-        WHERE o.status = 'PENDING_DISPATCH' AND o.payment_method != 'Contra Entrega'
+        WHERE o.status = 'PENDING_DISPATCH' AND (o.payment_method != 'Contra Entrega' OR (o.payment_method = 'Contra Entrega' AND o.tracking_number IS NOT NULL AND o.tracking_number != ''))
         ORDER BY o.created_at DESC
     """, conn)
 
-    solo_sin_guia = st.checkbox("Mostrar solo pedidos sin guía", value=False, key="chk_sin_guia_pagados")
-    
-    if solo_sin_guia:
-        df_display = df_dispatch[df_dispatch['Guía Actual'].isna() | (df_dispatch['Guía Actual'] == '')]
-    else:
-        df_display = df_dispatch
-
-    if df_display.empty:
+    if df_dispatch.empty:
         st.info("No hay pedidos que coincidan con la búsqueda actual.")
     else:
         event = st.dataframe(
-            df_display.drop(columns=['id']),
+            df_dispatch.drop(columns=['id']),
             use_container_width=True,
             hide_index=True,
             on_select="rerun",
@@ -179,22 +172,15 @@ with tab_ce:
                o.created_by AS "Vendedor",
                o.invoice_number AS "Factura"
         FROM orders o
-        WHERE o.status = 'PENDING_DISPATCH' AND o.payment_method = 'Contra Entrega'
+        WHERE o.status = 'PENDING_DISPATCH' AND o.payment_method = 'Contra Entrega' AND (o.tracking_number IS NULL OR o.tracking_number = '')
         ORDER BY o.created_at DESC
     """, conn)
 
-    solo_sin_guia = st.checkbox("Mostrar solo pedidos sin guía", value=False, key="chk_sin_guia_ce")
-    
-    if solo_sin_guia:
-        df_display = df_dispatch[df_dispatch['Guía Actual'].isna() | (df_dispatch['Guía Actual'] == '')]
-    else:
-        df_display = df_dispatch
-
-    if df_display.empty:
+    if df_dispatch.empty:
         st.info("No hay pedidos que coincidan con la búsqueda actual.")
     else:
         event = st.dataframe(
-            df_display.drop(columns=['id']),
+            df_dispatch.drop(columns=['id']),
             use_container_width=True,
             hide_index=True,
             on_select="rerun",
