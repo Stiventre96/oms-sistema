@@ -37,7 +37,7 @@ with tab1:
                o.created_by AS "Vendedor",
                o.invoice_number AS "Factura"
         FROM orders o
-        WHERE o.status = 'PENDING_DISPATCH' AND (o.payment_method != 'Contra Entrega' OR (o.payment_method = 'Contra Entrega' AND o.tracking_number IS NOT NULL AND o.tracking_number != ''))
+        WHERE (o.status = 'PENDING_DISPATCH' AND o.payment_method NOT ILIKE 'Contra Entrega') OR (o.status IN ('PENDING_DISPATCH', 'PENDING_PAYMENT') AND o.payment_method ILIKE 'Contra Entrega' AND o.tracking_number IS NOT NULL AND o.tracking_number != '')
         ORDER BY o.created_at DESC
     """, conn)
 
@@ -172,7 +172,7 @@ with tab_ce:
                o.created_by AS "Vendedor",
                o.invoice_number AS "Factura"
         FROM orders o
-        WHERE o.status = 'PENDING_DISPATCH' AND o.payment_method = 'Contra Entrega' AND (o.tracking_number IS NULL OR o.tracking_number = '')
+        WHERE o.status IN ('PENDING_DISPATCH', 'PENDING_PAYMENT') AND o.payment_method ILIKE 'Contra Entrega' AND (o.tracking_number IS NULL OR o.tracking_number = '')
         ORDER BY o.created_at DESC
     """, conn)
 
