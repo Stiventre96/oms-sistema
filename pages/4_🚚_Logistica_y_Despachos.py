@@ -172,7 +172,7 @@ with tab_ce:
                o.created_by AS "Vendedor",
                o.invoice_number AS "Factura"
         FROM orders o
-        WHERE o.status = 'PENDING_DISPATCH' AND o.payment_method = 'Contra Entrega'
+        WHERE o.status = 'PENDING_DISPATCH' AND o.payment_method = 'Contra Entrega' AND (o.tracking_number IS NULL OR o.tracking_number = '')
         ORDER BY o.created_at DESC
     """, conn)
 
