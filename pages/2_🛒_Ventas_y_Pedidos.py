@@ -115,7 +115,7 @@ with tab1:
                 with colE:
                     ext_order_id = st.text_input("ID de Pedido (Ej. Woocommerce)")
                 with colF:
-                    payment_method = st.selectbox("Método de Pago", ["Efectivo", "Wompy", "Contra Entrega", "Bancolombia", "Nequi", "Davivienda", "Canje por Publicidad", "sistecredito", "Embajador"])
+                    payment_method = st.selectbox("Método de Pago", ["Efectivo", "Wompy", "Contra Entrega", "Bancolombia", "Nequi", "Davivienda", "Canje por Publicidad", "sistecredito", "Embajador" , "consignacion"])
 
                 submit_order = st.form_submit_button("Confirmar Pedido")
 
