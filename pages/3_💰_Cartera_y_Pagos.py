@@ -165,7 +165,7 @@ with tab1:
                             value=row['invoice_number'] or "", key=f"mod_inv_{order_id_sel}")
                     with colC:
                         pay_method_opts = ["Efectivo", "Wompy", "Contra Entrega", "Bancolombia",
-                                           "Nequi", "Davivienda", "Canje por Publicidad", "sistecredito", "Embajador"]
+                                           "Nequi", "Davivienda", "Canje por Publicidad", "Embajador"]
                         curr_method = row['payment_method']
                         new_pay_method = st.selectbox("Corregir Método de Pago", pay_method_opts,
                             index=pay_method_opts.index(curr_method) if curr_method in pay_method_opts else 0,
@@ -197,7 +197,9 @@ with tab2:
 
     df_ce = pd.read_sql("""
         SELECT o.id, o.order_number AS "N° Pedido", o.order_date AS "Fecha",
-               o.customer_name AS "Cliente", o.customer_city AS "Ciudad",
+               o.customer_name AS "Cliente", o.customer_cedula AS "Cédula", o.customer_phone AS "Teléfono",
+               o.customer_address AS "Dirección", o.customer_city AS "Ciudad", o.customer_department AS "Departamento",
+               o.sales_channel AS "Canal", o.external_order_id AS "ID Externo", o.created_by AS "Vendedor",
                CASE 
                    WHEN o.status='PENDING_DISPATCH' THEN '📦 En Logística'
                    WHEN o.status='DISPATCHED' THEN '🚚 Despachado'
@@ -205,7 +207,8 @@ with tab2:
                    ELSE o.status 
                END AS "Estado de Envío",
                o.tracking_number AS "Guía",
-               o.total_amount AS "Total"
+               o.total_amount AS "Total",
+               o.payment_method AS "Medio Pago"
         FROM orders o
         WHERE o.payment_method = 'Contra Entrega' 
           AND (o.invoice_number IS NULL OR o.invoice_number = '')
@@ -232,8 +235,29 @@ with tab2:
             
             with st.container(border=True):
                 st.markdown(f"#### Cerrando Pedido Contra Entrega: `{row_ce['N° Pedido']}`")
-                st.markdown(f"**Cliente:** {row_ce['Cliente']} | **Valor a cobrar:** ${row_ce['Total']:,.2f}")
-                st.markdown(f"**Estado de envío:** {row_ce['Estado de Envío']} | **Guía:** {row_ce['Guía'] or 'Sin guía aún'}")
+                st.markdown(f"**Estado de envío:** {row_ce['Estado de Envío']}")
+                
+                c1, c2, c3, c4 = st.columns(4)
+                with c1:
+                    st.markdown("##### 🧾 Cliente")
+                    st.markdown(f"**Nombre:** {row_ce['Cliente']}")
+                    st.markdown(f"**Cédula / NIT:** {row_ce['Cédula']}")
+                    st.markdown(f"**Teléfono:** {row_ce['Teléfono'] or 'Sin registrar'}")
+                with c2:
+                    st.markdown("##### 📍 Destino")
+                    st.markdown(f"**Dirección:** {row_ce['Dirección'] or 'Sin registrar'}")
+                    st.markdown(f"**Ciudad:** {row_ce['Ciudad'] or 'Sin registrar'}")
+                    st.markdown(f"**Depto:** {row_ce['Departamento'] or 'Sin registrar'}")
+                with c3:
+                    st.markdown("##### 📋 Facturación y Envío")
+                    st.markdown(f"**Cobrar:** ${row_ce['Total']:,.2f}")
+                    st.markdown(f"**Guía Coord:** {row_ce['Guía'] or 'Sin guía asignada'}")
+                with c4:
+                    st.markdown("##### ℹ️ Info Comercial")
+                    st.markdown(f"**Fecha:** {row_ce['Fecha']}")
+                    st.markdown(f"**Canal:** {row_ce['Canal']}")
+                    st.markdown(f"**ID Externo:** {row_ce['ID Externo'] or 'Sin ID'}")
+                    st.markdown(f"**Vendedor:** {row_ce['Vendedor']}")
                 
                 st.divider()
                 st.markdown("⚠️ **Cuando la transportadora consigne el dinero, ingresa la factura para cerrar el pedido:**")
