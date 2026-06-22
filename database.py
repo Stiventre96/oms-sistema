@@ -6,14 +6,16 @@ import streamlit as st
 # Si no estamos en la nube (ej. corriendo local), intentará usar variables de entorno.
 try:
     DB_URI = st.secrets["DATABASE_URL"]
-except KeyError:
+except Exception:
     DB_URI = os.getenv("DATABASE_URL")
 
 if not DB_URI:
     raise ValueError("No se encontró la conexión a la base de datos (DATABASE_URL) en los secretos.")
 
+@st.cache_resource(ttl=3600) # Mantiene la conexión viva y reutilizable para evitar saturar el servidor
 def get_connection():
-    return psycopg2.connect(DB_URI)
+    # connect_timeout evita que la app se quede congelada eternamente si la DB tarda en responder
+    return psycopg2.connect(DB_URI, connect_timeout=10)
 
 def init_db():
     conn = get_connection()
