@@ -1,28 +1,16 @@
 import psycopg2
 import os
 import streamlit as st
-
 # Intentamos obtener la conexión de los Secretos seguros de Streamlit.
 # Si no estamos en la nube (ej. corriendo local), intentará usar variables de entorno.
 try:
     DB_URI = st.secrets["DATABASE_URL"]
 except Exception:
     DB_URI = os.getenv("DATABASE_URL")
-
 if not DB_URI:
     raise ValueError("No se encontró la conexión a la base de datos (DATABASE_URL) en los secretos.")
-
-@st.cache_resource(ttl=3600)
-def _create_connection():
-    return psycopg2.connect(DB_URI, connect_timeout=10)
-
 def get_connection():
-    conn = _create_connection()
-    if conn.closed != 0:
-        _create_connection.clear() # Si la conexión se cayó, limpiamos la caché
-        conn = _create_connection() # Y creamos una nueva
-    return conn
-
+    return psycopg2.connect(DB_URI)
 def init_db():
     conn = get_connection()
     c = conn.cursor()
@@ -58,7 +46,6 @@ def init_db():
             FOREIGN KEY(product_id) REFERENCES products(id)
         )
     ''')
-
     c.execute('''
         CREATE TABLE IF NOT EXISTS orders (
             id SERIAL PRIMARY KEY,
@@ -82,7 +69,6 @@ def init_db():
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
     ''')
-
     c.execute('''
         CREATE TABLE IF NOT EXISTS order_items (
             id SERIAL PRIMARY KEY,
@@ -95,7 +81,6 @@ def init_db():
             FOREIGN KEY(product_id) REFERENCES products(id)
         )
     ''')
-
     users_data = [
         ('admin', 'admin123', 'Admin'),
         ('ventas1', 'ventas123', 'Ventas'),
@@ -109,7 +94,6 @@ def init_db():
         
     conn.commit()
     conn.close()
-
 if __name__ == "__main__":
     init_db()
     print("Base de datos inicializada/actualizada en PostgreSQL.")
