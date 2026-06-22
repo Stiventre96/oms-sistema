@@ -12,10 +12,16 @@ except Exception:
 if not DB_URI:
     raise ValueError("No se encontró la conexión a la base de datos (DATABASE_URL) en los secretos.")
 
-@st.cache_resource(ttl=3600) # Mantiene la conexión viva y reutilizable para evitar saturar el servidor
-def get_connection():
-    # connect_timeout evita que la app se quede congelada eternamente si la DB tarda en responder
+@st.cache_resource(ttl=3600)
+def _create_connection():
     return psycopg2.connect(DB_URI, connect_timeout=10)
+
+def get_connection():
+    conn = _create_connection()
+    if conn.closed != 0:
+        _create_connection.clear() # Si la conexión se cayó, limpiamos la caché
+        conn = _create_connection() # Y creamos una nueva
+    return conn
 
 def init_db():
     conn = get_connection()
